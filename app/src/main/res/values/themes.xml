@@ -1,0 +1,19 @@
+<resources>
+    <!-- Material 3 DayNight: switches automatically between light and dark.
+         Colors come from values/colors.xml (light) and values-night/colors.xml (dark). -->
+    <style name="Theme.WifiTrace" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/md_primary</item>
+        <item name="colorOnPrimary">@color/md_on_primary</item>
+        <item name="colorPrimaryContainer">@color/md_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/md_on_primary_container</item>
+        <item name="colorSecondaryContainer">@color/md_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/md_on_secondary_container</item>
+        <item name="colorSurface">@color/md_surface</item>
+        <item name="colorOnSurface">@color/md_on_surface</item>
+        <item name="colorSurfaceVariant">@color/md_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/md_on_surface_variant</item>
+        <item name="colorOutline">@color/md_outline</item>
+        <item name="colorOnBackground">@color/md_on_surface</item>
+        <item name="android:colorBackground">@color/md_surface</item>
+    </style>
+</resources>

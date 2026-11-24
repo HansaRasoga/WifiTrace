@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark palette (teal) -->
+    <color name="md_primary">#4CDADA</color>
+    <color name="md_on_primary">#003737</color>
+    <color name="md_primary_container">#004F4F</color>
+    <color name="md_on_primary_container">#6FF7F6</color>
+    <color name="md_secondary_container">#324B4B</color>
+    <color name="md_on_secondary_container">#CCE8E7</color>
+    <color name="md_surface">#0E1514</color>
+    <color name="md_on_surface">#DDE4E3</color>
+    <color name="md_surface_variant">#3F4948</color>
+    <color name="md_on_surface_variant">#BEC9C8</color>
+    <color name="md_outline">#899392</color>
+</resources>
