@@ -39,11 +39,12 @@ class SummaryFragment : Fragment(R.layout.fragment_summary) {
 
     private fun refresh() {
         if (!isAdded || view == null) return
-        val trials = LogRepository.readAll(requireContext())
+        val ctx = context ?: return
+        val trials = LogRepository.readAll(ctx)
         val byLabel = trials.groupBy { it.label }
 
         // ----- Chart: one series per obstacle state -----
-        val series = Obstacle.values().mapNotNull { obstacle ->
+        val series = Obstacle.entries.mapNotNull { obstacle ->
             val points = byLabel.mapNotNull { (label, list) ->
                 val parsed = Plan.parse(label)
                 if (parsed == null || parsed.second != obstacle) {

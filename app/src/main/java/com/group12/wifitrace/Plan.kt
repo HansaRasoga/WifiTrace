@@ -14,7 +14,7 @@ enum class Obstacle(
     BODY("body_blocked", "Body blocked", Color.parseColor("#AB47BC"), listOf(2f, 6f));
 
     companion object {
-        fun fromKey(key: String): Obstacle? = values().firstOrNull { it.key == key }
+        fun fromKey(key: String): Obstacle? = entries.firstOrNull { it.key == key }
     }
 }
 

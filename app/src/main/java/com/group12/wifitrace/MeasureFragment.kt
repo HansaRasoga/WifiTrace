@@ -46,8 +46,15 @@ class MeasureFragment : Fragment(R.layout.fragment_measure) {
     private var currentLabel = ""
     private var startAfterPermission = false
 
+    private val locationPermissions = arrayOf(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    )
+
     private val permissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
             if (granted) {
                 if (startAfterPermission) {
                     startAfterPermission = false
@@ -55,11 +62,13 @@ class MeasureFragment : Fragment(R.layout.fragment_measure) {
                 }
             } else {
                 startAfterPermission = false
-                Toast.makeText(
-                    requireContext(),
-                    "Location permission is needed to read Wi-Fi info",
-                    Toast.LENGTH_LONG
-                ).show()
+                context?.let { ctx ->
+                    Toast.makeText(
+                        ctx,
+                        "Location permission is needed to read Wi-Fi info",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
 
@@ -113,16 +122,32 @@ class MeasureFragment : Fragment(R.layout.fragment_measure) {
         groupObstacle.setOnCheckedStateChangeListener { _, _ -> updateLabelInfo() }
         btnStart.setOnClickListener { startTrial() }
 
+        trialBar.max = Plan.READINGS_PER_TRIAL
         updateLabelInfo()
         if (!hasLocationPermission()) {
-            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            permissionLauncher.launch(locationPermissions)
         }
     }
 
     override fun onResume() {
         super.onResume()
-        handler.post(liveRunnable)
-        updateLabelInfo()
+        if (!isHidden) {
+            handler.post(liveRunnable)
+            updateLabelInfo()
+        }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            updateLabelInfo()
+            handler.removeCallbacks(liveRunnable)
+            handler.post(liveRunnable)
+        } else {
+            if (!trialRunning) {
+                handler.removeCallbacks(liveRunnable)
+            }
+        }
     }
 
     override fun onPause() {
@@ -140,10 +165,16 @@ class MeasureFragment : Fragment(R.layout.fragment_measure) {
 
     // ---------- Wi-Fi ----------
 
-    private fun hasLocationPermission(): Boolean =
-        ContextCompat.checkSelfPermission(
-            requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
+    private fun hasLocationPermission(): Boolean {
+        val ctx = context ?: return false
+        val fine = ContextCompat.checkSelfPermission(
+            ctx, Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
+        val coarse = ContextCompat.checkSelfPermission(
+            ctx, Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+        return fine || coarse
+    }
 
     /** Current RSSI in dBm, or null if the phone is not connected to Wi-Fi. */
     @Suppress("DEPRECATION")
@@ -163,6 +194,7 @@ class MeasureFragment : Fragment(R.layout.fragment_measure) {
 
     @Suppress("DEPRECATION")
     private fun updateLiveDisplay() {
+        if (!isAdded || view == null) return
         val rssi = currentRssi()
         if (rssi == null) {
             tvRssi.text = "-- dBm"
@@ -192,8 +224,9 @@ class MeasureFragment : Fragment(R.layout.fragment_measure) {
 
     private fun updateLabelInfo() {
         if (!isAdded) return
+        val ctx = context ?: return
         val label = selectedLabel()
-        val done = LogRepository.readAll(requireContext()).count { it.label == label }
+        val done = LogRepository.readAll(ctx).count { it.label == label }
         val note = if (label in Plan.conditions) "" else "  (not in the planned 11 conditions)"
         tvLabelInfo.text = "Label: $label  ·  $done of ${Plan.REPEATS} trials done$note"
     }
@@ -211,7 +244,7 @@ class MeasureFragment : Fragment(R.layout.fragment_measure) {
         if (trialRunning) return
         if (!hasLocationPermission()) {
             startAfterPermission = true
-            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            permissionLauncher.launch(locationPermissions)
             return
         }
         if (currentRssi() == null) {
@@ -242,8 +275,9 @@ class MeasureFragment : Fragment(R.layout.fragment_measure) {
     private fun finishTrial() {
         trialRunning = false
         setInputsEnabled(true)
+        val ctx = context ?: return
         try {
-            val trial = LogRepository.append(requireContext(), currentLabel, readings.toList())
+            val trial = LogRepository.append(ctx, currentLabel, readings.toList())
             tvProgress.text = String.format(
                 Locale.US,
                 "Saved %s, trial %d. Average %.1f dBm",

@@ -23,11 +23,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         if (savedInstanceState == null) {
+            val measure = MeasureFragment()
+            val history = HistoryFragment()
+            val summary = SummaryFragment()
+            val settings = SettingsFragment()
             supportFragmentManager.beginTransaction()
-                .add(R.id.fragmentContainer, MeasureFragment(), "measure")
-                .add(R.id.fragmentContainer, HistoryFragment(), "history")
-                .add(R.id.fragmentContainer, SummaryFragment(), "summary")
-                .add(R.id.fragmentContainer, SettingsFragment(), "settings")
+                .add(R.id.fragmentContainer, measure, "measure")
+                .add(R.id.fragmentContainer, history, "history")
+                .add(R.id.fragmentContainer, summary, "summary")
+                .add(R.id.fragmentContainer, settings, "settings")
+                .hide(history)
+                .hide(summary)
+                .hide(settings)
                 .commitNow()
         }
 
@@ -39,8 +46,11 @@ class MainActivity : AppCompatActivity() {
             showTab(item.itemId)
             true
         }
-        nav.selectedItemId = selectedId
-        showTab(selectedId)
+        if (nav.selectedItemId != selectedId) {
+            nav.selectedItemId = selectedId
+        } else {
+            showTab(selectedId)
+        }
     }
 
     private fun showTab(id: Int) {

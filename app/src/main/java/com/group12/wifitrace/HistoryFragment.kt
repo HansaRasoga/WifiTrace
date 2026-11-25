@@ -45,7 +45,8 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
 
     private fun refresh() {
         if (!isAdded || view == null) return
-        val trials = LogRepository.readAll(requireContext()).reversed()
+        val ctx = context ?: return
+        val trials = LogRepository.readAll(ctx).reversed()
         adapter.submit(trials)
         tvCount.text = "${trials.size} trial${if (trials.size == 1) "" else "s"} logged"
         tvEmpty.visibility = if (trials.isEmpty()) View.VISIBLE else View.GONE
@@ -53,15 +54,16 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
     }
 
     private fun confirmUndo() {
-        if (LogRepository.readAll(requireContext()).isEmpty()) {
-            Toast.makeText(requireContext(), "Nothing to undo", Toast.LENGTH_SHORT).show()
+        val ctx = context ?: return
+        if (LogRepository.readAll(ctx).isEmpty()) {
+            Toast.makeText(ctx, "Nothing to undo", Toast.LENGTH_SHORT).show()
             return
         }
-        MaterialAlertDialogBuilder(requireContext())
+        MaterialAlertDialogBuilder(ctx)
             .setTitle("Remove the last trial?")
             .setMessage("The most recent row will be deleted from wifi_logs.csv.")
             .setPositiveButton("Remove") { _, _ ->
-                LogRepository.deleteLast(requireContext())
+                LogRepository.deleteLast(ctx)
                 refresh()
             }
             .setNegativeButton("Cancel", null)

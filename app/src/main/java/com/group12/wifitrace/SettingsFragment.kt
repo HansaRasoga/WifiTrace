@@ -53,9 +53,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     }
 
     private fun shareLog() {
-        val ctx = requireContext()
+        val ctx = context ?: return
         val file = LogRepository.file(ctx)
-        if (!file.exists()) {
+        if (!file.exists() || LogRepository.readAll(ctx).isEmpty()) {
             Toast.makeText(ctx, "No log yet. Run a trial first.", Toast.LENGTH_SHORT).show()
             return
         }
@@ -69,7 +69,11 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     }
 
     private fun saveToDownloads() {
-        val ctx = requireContext()
+        val ctx = context ?: return
+        if (LogRepository.readAll(ctx).isEmpty()) {
+            Toast.makeText(ctx, "No log yet. Run a trial first.", Toast.LENGTH_SHORT).show()
+            return
+        }
         try {
             val name = LogRepository.exportToDownloads(ctx)
             Toast.makeText(ctx, "Saved to Downloads/$name", Toast.LENGTH_LONG).show()
@@ -79,12 +83,17 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     }
 
     private fun confirmClear() {
-        MaterialAlertDialogBuilder(requireContext())
+        val ctx = context ?: return
+        if (LogRepository.readAll(ctx).isEmpty()) {
+            Toast.makeText(ctx, "No data to delete", Toast.LENGTH_SHORT).show()
+            return
+        }
+        MaterialAlertDialogBuilder(ctx)
             .setTitle("Delete all data?")
             .setMessage("This permanently deletes wifi_logs.csv from the phone. Share or save a copy first if you need it.")
             .setPositiveButton("Delete") { _, _ ->
-                LogRepository.clear(requireContext())
-                Toast.makeText(requireContext(), "All data deleted", Toast.LENGTH_SHORT).show()
+                LogRepository.clear(ctx)
+                Toast.makeText(ctx, "All data deleted", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Cancel", null)
             .show()

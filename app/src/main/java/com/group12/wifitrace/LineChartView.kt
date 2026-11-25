@@ -75,10 +75,12 @@ class LineChartView @JvmOverloads constructor(
             50, Color.red(onSurface), Color.green(onSurface), Color.blue(onSurface)
         )
 
+        if (width <= 0 || height <= 0) return
         val left = dp(48f)
         val right = width - dp(16f)
         val top = dp(40f)
         val bottom = height - dp(36f)
+        if (right <= left || bottom <= top) return
 
         val all = series.flatMap { it.points }
         if (all.isEmpty()) {
@@ -124,14 +126,15 @@ class LineChartView @JvmOverloads constructor(
         canvas.drawText("dBm", dp(6f), top - dp(8f), textPaint)
 
         // Legend (line sample + name)
-        var lx = left
+        var lx = dp(12f)
+        textPaint.textSize = sp(11f)
         for (s in series) {
             linePaint.color = s.color
             applyDash(s)
-            canvas.drawLine(lx, dp(14f), lx + dp(22f), dp(14f), linePaint)
+            canvas.drawLine(lx, dp(14f), lx + dp(18f), dp(14f), linePaint)
             textPaint.textAlign = Paint.Align.LEFT
-            canvas.drawText(s.name, lx + dp(28f), dp(18f), textPaint)
-            lx += dp(28f) + textPaint.measureText(s.name) + dp(16f)
+            canvas.drawText(s.name, lx + dp(22f), dp(18f), textPaint)
+            lx += dp(22f) + textPaint.measureText(s.name) + dp(12f)
         }
 
         // Data lines + points

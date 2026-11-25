@@ -31,6 +31,9 @@ object LogRepository {
 
     fun file(context: Context): File {
         val dir = context.getExternalFilesDir(null) ?: context.filesDir
+        if (!dir.exists()) {
+            dir.mkdirs()
+        }
         return File(dir, FILE_NAME)
     }
 
@@ -52,14 +55,14 @@ object LogRepository {
             null
         } else {
             Trial(
-                timestamp = p[0],
-                label = p[1],
+                timestamp = p[0].trim(),
+                label = p[1].trim(),
                 number = p[2].trim().toInt(),
                 readings = p.subList(3, 3 + N).map { it.trim().toInt() },
                 average = p[3 + N].trim().toDouble()
             )
         }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 
