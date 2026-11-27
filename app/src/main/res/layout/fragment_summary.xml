@@ -41,6 +41,15 @@
                     android:layout_height="280dp"
                     android:layout_marginTop="8dp"
                     android:contentDescription="Line chart of average Wi-Fi signal strength against distance for no wall, wall and body blocked" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchTheoretical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:checked="true"
+                    android:text="Show theoretical curve (No wall)"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -98,8 +107,53 @@
                     android:layout_marginTop="8dp"
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp"
-                    android:text="Change = average RSSI minus the 1 m no-wall baseline. Negative means a weaker signal."
+                    android:text="Change = average RSSI minus the 1 m no-wall baseline. Obs = isolated obstacle loss vs. same-distance no-wall trial."
                     android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Insights Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardInsights"
+            style="@style/Widget.Material3.CardView.Elevated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Attenuation Insights &amp; Solutions"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                    android:textColor="?attr/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tvInsightStats"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="?attr/colorOutlineVariant" />
+
+                <TextView
+                    android:id="@+id/tvRecommendations"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="4dp"
+                    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

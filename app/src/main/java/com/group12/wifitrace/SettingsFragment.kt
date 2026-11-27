@@ -27,7 +27,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             AppCompatDelegate.MODE_NIGHT_YES -> R.id.rbDark
             else -> R.id.rbSystem
         }
-        group.check(checkedId) // set before attaching the listener
+        group.check(checkedId)
         group.setOnCheckedChangeListener { _, id ->
             val mode = when (id) {
                 R.id.rbLight -> AppCompatDelegate.MODE_NIGHT_NO

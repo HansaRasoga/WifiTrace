@@ -29,7 +29,8 @@ class LineChartView @JvmOverloads constructor(
         val name: String,
         val color: Int,
         val points: List<Pair<Float, Float>>,
-        val dash: List<Float>? = null
+        val dash: List<Float>? = null,
+        val showDots: Boolean = true
     )
 
     private var series: List<Series> = emptyList()
@@ -151,9 +152,11 @@ class LineChartView @JvmOverloads constructor(
                 }
                 canvas.drawPath(path, linePaint)
             }
-            dotPaint.color = s.color
-            for (p in pts) {
-                canvas.drawCircle(xPos(p.first), yPos(p.second), dp(4.5f), dotPaint)
+            if (s.showDots) {
+                dotPaint.color = s.color
+                for (p in pts) {
+                    canvas.drawCircle(xPos(p.first), yPos(p.second), dp(4.5f), dotPaint)
+                }
             }
         }
         linePaint.pathEffect = null
